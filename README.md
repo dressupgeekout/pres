@@ -27,9 +27,9 @@ the standard output.
 
 You navigate a slideshow with these key bindings:
 
-  l, n -- next slide
-  h, p -- previous slide
-  q    -- quit
+  - **l**, **n** -- next slide
+  - **h**, **p** -- previous slide
+  - **q** -- quit
 
 
 ## Example presfile
