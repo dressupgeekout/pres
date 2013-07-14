@@ -1,0 +1,90 @@
+#!/usr/bin/env ruby
+# pres -- Christian Koch <cfkoch@sdf.lonestar.org>
+
+require 'curses'
+
+class Pres
+  WIDTH = 80
+  HEIGHT = 24
+
+  def initialize(presfile=nil)
+    if not presfile
+      version
+      exit 0
+    end
+
+    begin
+      @slides = File.read(presfile).split("\n\f\n")
+    rescue => err
+      $stderr.puts(err.message) 
+      exit 1
+    end
+
+    Curses.init_screen
+    Curses.noecho
+    Curses.cbreak
+    @slide_view = Curses::Window.new(HEIGHT - 1, WIDTH, 0, 0)
+    @status_line = Curses::Window.new(1, WIDTH, HEIGHT, 0)
+    @cur_slide = 0
+
+    update_slide_view
+    update_status_line
+  end
+
+  def version
+    puts "pres v0.1"
+  end
+
+  def go!
+    loop do
+      ch = @slide_view.getch
+
+      case ch
+      when "h", "p"
+        @cur_slide -= 1 if @cur_slide > 0
+      when "l", "n"
+        @cur_slide += 1 if @cur_slide < (@slides.length - 1)
+      when "q"
+        break
+      end
+
+      update_slide_view
+      update_status_line
+    end
+
+    cleanup
+  end
+
+  def cleanup
+    @slide_view.close
+    @status_line.close
+    exit 0
+  end
+
+  def update_slide_view
+    body_lines = @slides[@cur_slide].split("\n")
+    first_line = body_lines.shift
+    body = body_lines.join("\n")
+    @slide_view.instance_eval do
+      clear
+      setpos(0, 0)
+      attron(Curses::A_STANDOUT)
+      addstr(first_line)
+      attroff(Curses::A_STANDOUT)
+      addstr("\n")
+      addstr(body)
+      refresh
+    end
+  end
+
+  def update_status_line
+    @status_line.clear
+    @status_line.setpos(0, 0)
+    @status_line.addstr("[%d/%d]" % [@cur_slide + 1, @slides.length])
+    @status_line.refresh
+  end
+end
+
+#####
+
+Pres.new(ARGV[0]).go!
