@@ -44,6 +44,10 @@ class Pres
         @cur_slide -= 1 if @cur_slide > 0
       when "l", "n"
         @cur_slide += 1 if @cur_slide < (@slides.length - 1)
+      when "g"
+        @cur_slide = 0
+      when "G"
+        @cur_slide = (@slides.length - 1)
       when "q"
         break
       end

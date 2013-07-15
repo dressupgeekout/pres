@@ -25,10 +25,12 @@ display.
 If you run `pres` without any arguments, it prints version information to
 the standard output.
 
-You navigate a slideshow with these key bindings:
+You navigate a slideshow with these key bindings. They're like less(1):
 
   - **l**, **n** -- next slide
   - **h**, **p** -- previous slide
+  - **g** -- first slide
+  - **G** -- last slide
   - **q** -- quit
 
 
